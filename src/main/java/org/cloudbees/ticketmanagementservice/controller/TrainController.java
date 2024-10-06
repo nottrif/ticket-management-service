@@ -2,8 +2,6 @@ package org.cloudbees.ticketmanagementservice.controller;
 
 import org.cloudbees.ticketmanagementservice.DTOs.PurchaseTicketDTO;
 import org.cloudbees.ticketmanagementservice.DTOs.ReceiptDTO;
-import org.cloudbees.ticketmanagementservice.DTOs.UserDTO;
-import org.cloudbees.ticketmanagementservice.entity.Ticket;
 import org.cloudbees.ticketmanagementservice.entity.User;
 import org.cloudbees.ticketmanagementservice.service.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +44,14 @@ public class TrainController {
         }
     }
 
-    @GetMapping("/seats")
-    public List<String> getSeatsBySection(@RequestParam String section) {
-        return trainService.getSeatsBySection(section);
+    @GetMapping("/users-by-section")
+    public ResponseEntity getUsersBySection(@RequestParam String section) {
+        Map<String, String> usersBySection = trainService.getUsersBySection(section);
+        if (usersBySection.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No users found in section " + section);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(usersBySection);
+        }
     }
 
     @DeleteMapping("/remove/{email}")

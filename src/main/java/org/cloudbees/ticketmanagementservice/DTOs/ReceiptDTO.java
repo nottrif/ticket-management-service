@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.cloudbees.ticketmanagementservice.entity.User;
 
 @Getter
 @Setter
@@ -12,11 +13,6 @@ import lombok.Setter;
 public class ReceiptDTO {
     private String from;
     private String to;
-    private UserDTO user;
+    private User user;
     private double price;
-
-//    @Override
-//    public String toString() {
-//        return "ReceiptDTO [from=" + from + ", to=" + to + ", user=" + user + ", price=" + price + "]";
-//    }
 }

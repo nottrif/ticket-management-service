@@ -8,20 +8,34 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing train ticket operations.
+ */
 @Service
 public class TrainService {
     private List<String> sectionASeats = new ArrayList<>();
     private List<String> sectionBSeats = new ArrayList<>();
     private Map<String, Ticket> allocatedTickets = new HashMap<>();
 
+    /**
+     * Initializes the TrainService with seats for sections A and B.
+     */
     public TrainService() {
-        // Initialize seats for section A and B (A1-A50, B1-B50)
         for (int i = 1; i <= 50; i++) {
             sectionASeats.add("A" + i);
             sectionBSeats.add("B" + i);
         }
     }
 
+    /**
+     * Purchases a ticket for a user.
+     *
+     * @param user    the user purchasing the ticket
+     * @param section the section of the seat
+     * @param seat    the seat number
+     * @return a ReceiptDTO containing the ticket details
+     * @throws IllegalArgumentException if the seat is not available or the user already has a ticket
+     */
     public ReceiptDTO purchaseTicket(User user, String section, String seat) {
         if (allocatedTickets.containsKey(user.getEmail())) {
             throw new IllegalArgumentException("Ticket has been booked for this email. Please use modify seat API to change " +
@@ -40,11 +54,15 @@ public class TrainService {
         Ticket ticket = new Ticket(user, seat, section);
         allocatedTickets.put(user.getEmail(), ticket);
 
-        ReceiptDTO receipt = new ReceiptDTO(ticket.getFrom(), ticket.getTo(), user, ticket.getPrice());
-
-        return receipt;
+        return new ReceiptDTO(ticket.getFrom(), ticket.getTo(), user, ticket.getPrice());
     }
 
+    /**
+     * Retrieves the ticket for a user by email.
+     *
+     * @param email the email of the user
+     * @return a ReceiptDTO containing the ticket details, or null if no ticket is found
+     */
     public ReceiptDTO getTicket(String email) {
         Ticket ticket = allocatedTickets.get(email);
         if (ticket != null) {
@@ -54,6 +72,12 @@ public class TrainService {
         }
     }
 
+    /**
+     * Retrieves users and their allocated seats by section.
+     *
+     * @param section the section to filter by
+     * @return a map of user names to seat numbers
+     */
     public Map<String, String> getUsersBySection(String section) {
         return allocatedTickets.values().stream()
                 .filter(ticket -> section.equals(ticket.getSection()))
@@ -61,6 +85,12 @@ public class TrainService {
                         Ticket::getSeat));
     }
 
+    /**
+     * Removes a user and their ticket by email.
+     *
+     * @param email the email of the user
+     * @return true if the user was removed, false otherwise
+     */
     public boolean removeUser(String email) {
         Ticket ticket = allocatedTickets.remove(email);
         if (ticket != null) {
@@ -77,6 +107,15 @@ public class TrainService {
         return false;
     }
 
+    /**
+     * Modifies the seat for a user's ticket.
+     *
+     * @param email     the email of the user
+     * @param newSection the new section of the seat
+     * @param newSeat   the new seat number
+     * @return a ReceiptDTO containing the updated ticket details
+     * @throws IllegalArgumentException if the new seat is not available or no ticket is found for the user
+     */
     public ReceiptDTO modifySeat(String email, String newSection, String newSeat) {
         Ticket ticket = allocatedTickets.get(email);
         if (ticket == null) {
@@ -91,7 +130,6 @@ public class TrainService {
         } else {
             throw new IllegalArgumentException("Seat " + newSeat + " in section " + newSection + " is not available.");
         }
-
 
         String oldSeat = ticket.getSection().concat(ticket.getSeat());
         if ("A".equals(ticket.getSection())) {

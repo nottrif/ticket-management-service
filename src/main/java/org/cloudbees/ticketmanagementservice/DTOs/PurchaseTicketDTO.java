@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PurchaseTicketDTO {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String seat;
-    private String section;
+  private String firstName;
+  private String lastName;
+  private String email;
+  private String seat;
+  private String section;
 }

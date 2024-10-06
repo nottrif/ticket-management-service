@@ -4,9 +4,13 @@
 Since the problem left room for interpretation for seats to be limited or not, I have chosen to mirror the real-world scenario where seats are limited.
 I have assumed each section to have **50** seats (A1 - A50 and B1 - B50).
 
+The postman collection for the API is pushed along with the code. The collection can be imported into Postman to test the API.
+
 The application contains **unit tests** for service methods using **Junit 5**. The tests are located in the `src/test` directory.
 
 The application has a **Github Actions** workflow which will run on pull request creation and on commits to the PR branch, it runs the tests and builds the application.
+
+The application is **containerized** using **Docker**. The Docker image is built using **Jib** and can be run using the `docker run` command.
 
 The Ticket Management Service is a Spring Boot application that provides an API for managing train ticket operations. It allows users to purchase tickets, retrieve receipts, get users by section, remove users, and modify seats.
 

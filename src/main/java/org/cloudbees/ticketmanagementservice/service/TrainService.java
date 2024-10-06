@@ -5,6 +5,7 @@ import org.cloudbees.ticketmanagementservice.DTOs.UserDTO;
 import org.cloudbees.ticketmanagementservice.entity.Ticket;
 import org.cloudbees.ticketmanagementservice.entity.User;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 @Service
@@ -34,14 +35,18 @@ public class TrainService {
         Ticket ticket = new Ticket(user, seat, section);
         allocatedTickets.put(user.getEmail(), ticket);
 
-        UserDTO userDTO = new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail());
-        ReceiptDTO receipt = new ReceiptDTO(ticket.getFrom(), ticket.getTo(), userDTO, ticket.getPrice());
+        ReceiptDTO receipt = new ReceiptDTO(ticket.getFrom(), ticket.getTo(), user, ticket.getPrice());
 
         return receipt;
     }
 
-    public Ticket getTicket(String email) {
-        return allocatedTickets.get(email);
+    public ReceiptDTO getTicket(String email) {
+        Ticket ticket = allocatedTickets.get(email);
+        if (ticket != null) {
+            return new ReceiptDTO(ticket.getFrom(), ticket.getTo(), ticket.getUser(), ticket.getPrice());
+        } else {
+            return null;
+        }
     }
 
     public List<String> getSeatsBySection(String section) {

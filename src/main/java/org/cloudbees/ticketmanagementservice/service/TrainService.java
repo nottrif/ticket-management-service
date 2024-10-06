@@ -1,12 +1,12 @@
 package org.cloudbees.ticketmanagementservice.service;
 
 import org.cloudbees.ticketmanagementservice.DTOs.ReceiptDTO;
-import org.cloudbees.ticketmanagementservice.DTOs.UserDTO;
 import org.cloudbees.ticketmanagementservice.entity.Ticket;
 import org.cloudbees.ticketmanagementservice.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainService {
@@ -23,6 +23,11 @@ public class TrainService {
     }
 
     public ReceiptDTO purchaseTicket(User user, String section, String seat) {
+        if(allocatedTickets.containsKey(user.getEmail())) {
+            throw new IllegalArgumentException("Ticket has been booked for this email. Please use modify seat API to change " +
+                    "your seat.");
+        }
+
         String chosenSeat = section.concat(seat);
         if ("A".equals(section) && sectionASeats.contains(chosenSeat)) {
             sectionASeats.remove(chosenSeat);
@@ -49,13 +54,11 @@ public class TrainService {
         }
     }
 
-    public List<String> getSeatsBySection(String section) {
-        if ("A".equals(section)) {
-            return new ArrayList<>(sectionASeats); // Return available seats in section A
-        } else if ("B".equals(section)) {
-            return new ArrayList<>(sectionBSeats); // Return available seats in section B
-        }
-        return Collections.emptyList();
+    public Map<String, String> getUsersBySection(String section) {
+        return allocatedTickets.values().stream()
+                .filter(ticket -> section.equals(ticket.getSection()))
+                .collect(Collectors.toMap(ticket -> ticket.getUser().getFirstName() + " " + ticket.getUser().getLastName(),
+                        Ticket::getSeat));
     }
 
     public boolean removeUser(String email) {

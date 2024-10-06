@@ -11,8 +11,8 @@ import org.cloudbees.ticketmanagementservice.entity.User;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReceiptDTO {
-  private String from;
-  private String to;
-  private User user;
-  private double price;
+    private String from;
+    private String to;
+    private User user;
+    private double price;
 }

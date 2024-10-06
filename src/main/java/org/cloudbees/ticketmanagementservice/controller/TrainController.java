@@ -2,6 +2,7 @@ package org.cloudbees.ticketmanagementservice.controller;
 
 import org.cloudbees.ticketmanagementservice.DTOs.PurchaseTicketDTO;
 import org.cloudbees.ticketmanagementservice.DTOs.ReceiptDTO;
+import org.cloudbees.ticketmanagementservice.DTOs.UserDTO;
 import org.cloudbees.ticketmanagementservice.entity.Ticket;
 import org.cloudbees.ticketmanagementservice.entity.User;
 import org.cloudbees.ticketmanagementservice.service.TrainService;
@@ -36,8 +37,13 @@ public class TrainController {
     }
 
     @GetMapping("/receipt/{email}")
-    public Ticket getReceipt(@PathVariable String email) {
-        return trainService.getTicket(email);
+    public ResponseEntity getReceipt(@PathVariable String email) {
+        ReceiptDTO receipt = trainService.getTicket(email);
+        if (receipt != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(receipt);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found.");
+        }
     }
 
     @GetMapping("/seats")

@@ -55,8 +55,9 @@ public class TrainController {
     }
 
     @DeleteMapping("/remove/{email}")
-    public String removeUser(@PathVariable String email) {
-        return trainService.removeUser(email) ? "User removed successfully." : "User not found.";
+    public ResponseEntity removeUser(@PathVariable String email) {
+        return trainService.removeUser(email) ? ResponseEntity.status(HttpStatus.OK).body("User removed successfully.") :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
 
     @PutMapping("/modify-seat/{email}")

@@ -23,7 +23,7 @@ public class TrainService {
     }
 
     public ReceiptDTO purchaseTicket(User user, String section, String seat) {
-        if(allocatedTickets.containsKey(user.getEmail())) {
+        if (allocatedTickets.containsKey(user.getEmail())) {
             throw new IllegalArgumentException("Ticket has been booked for this email. Please use modify seat API to change " +
                     "your seat.");
         }
@@ -64,18 +64,19 @@ public class TrainService {
     public boolean removeUser(String email) {
         Ticket ticket = allocatedTickets.remove(email);
         if (ticket != null) {
-            // Return the seat to the respective section's available seats
+            String seat = ticket.getSection().concat(ticket.getSeat());
             if ("A".equals(ticket.getSection())) {
-                sectionASeats.add(ticket.getSeat());
-                Collections.sort(sectionASeats); // Sort the seats to keep order
+                sectionASeats.add(seat);
+                Collections.sort(sectionASeats);
             } else if ("B".equals(ticket.getSection())) {
-                sectionBSeats.add(ticket.getSeat());
+                sectionBSeats.add(seat);
                 Collections.sort(sectionBSeats);
             }
             return true;
         }
         return false;
     }
+
 
     public boolean modifySeat(String email, String newSection, String newSeat) {
         Ticket ticket = allocatedTickets.get(email);

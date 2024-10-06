@@ -40,8 +40,8 @@ public class TrainService {
   public ReceiptDTO purchaseTicket(User user, String section, String seat) {
     if (allocatedTickets.containsKey(user.getEmail())) {
       throw new IllegalArgumentException(
-          "Ticket has been booked for this email. Please use modify seat API " +
-          "to change "
+          "Ticket has been booked for this email. Please use modify seat API "
+          + "to change "
           + "your seat.");
     }
 

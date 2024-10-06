@@ -77,23 +77,34 @@ public class TrainService {
         return false;
     }
 
-
-    public boolean modifySeat(String email, String newSection, String newSeat) {
+    public ReceiptDTO modifySeat(String email, String newSection, String newSeat) {
         Ticket ticket = allocatedTickets.get(email);
         if (ticket == null) {
-            return false;
+            throw new IllegalArgumentException("No ticket found for user with email " + email);
         }
 
-        // Remove the old seat from the current section
+        String seat = newSection.concat(newSeat);
+        if ("A".equals(newSection) && sectionASeats.contains(seat)) {
+            sectionASeats.remove(seat);
+        } else if ("B".equals(newSection) && sectionBSeats.contains(seat)) {
+            sectionBSeats.remove(seat);
+        } else {
+            throw new IllegalArgumentException("Seat " + newSeat + " in section " + newSection + " is not available.");
+        }
+
+
+        String oldSeat = ticket.getSection().concat(ticket.getSeat());
         if ("A".equals(ticket.getSection())) {
-            sectionASeats.add(ticket.getSeat());
+            sectionASeats.add(oldSeat);
             Collections.sort(sectionASeats);
         } else if ("B".equals(ticket.getSection())) {
-            sectionBSeats.add(ticket.getSeat());
+            sectionBSeats.add(oldSeat);
             Collections.sort(sectionBSeats);
         }
 
-        // Allocate the new seat if available
-        return purchaseTicket(ticket.getUser(), newSection, newSeat) != null;
+        Ticket newTicket = new Ticket(ticket.getUser(), newSeat, newSection);
+        allocatedTickets.put(email, newTicket);
+
+        return new ReceiptDTO(newTicket.getFrom(), newTicket.getTo(), newTicket.getUser(), newTicket.getPrice());
     }
 }

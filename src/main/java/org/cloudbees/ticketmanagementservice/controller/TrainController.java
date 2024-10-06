@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 
 @RestController
@@ -60,8 +61,15 @@ public class TrainController {
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
 
-    @PutMapping("/modify-seat/{email}")
-    public String modifySeat(@PathVariable String email, @RequestParam String newSection, @RequestParam String newSeat) {
-        return trainService.modifySeat(email, newSection, newSeat) ? "Seat updated successfully." : "User not found.";
+    @PutMapping("/modify")
+    public ResponseEntity modifySeat(@RequestBody PurchaseTicketDTO purchaseTicketDTO) {
+        try {
+            ReceiptDTO receipt = trainService.modifySeat(purchaseTicketDTO.getEmail(), purchaseTicketDTO.getSection(), purchaseTicketDTO.getSeat());
+            return ResponseEntity.status(HttpStatus.OK).body(receipt);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage());
+        }
     }
 }

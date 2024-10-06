@@ -11,17 +11,31 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+/**
+ * Controller class for handling train ticket operations.
+ */
 @RestController
 @RequestMapping("api/v1/tickets")
 public class TrainController {
 
     private final TrainService trainService;
 
+    /**
+     * Constructs a TrainController with the specified TrainService.
+     *
+     * @param trainService the TrainService to use
+     */
     @Autowired
     public TrainController(TrainService trainService) {
         this.trainService = trainService;
     }
 
+    /**
+     * Purchases a ticket for a user.
+     *
+     * @param purchaseTicketDTO the purchase ticket data transfer object
+     * @return a ResponseEntity containing the receipt or an error message
+     */
     @PostMapping("/purchase")
     public ResponseEntity purchaseTicket(@RequestBody PurchaseTicketDTO purchaseTicketDTO) {
         try {
@@ -35,6 +49,12 @@ public class TrainController {
         }
     }
 
+    /**
+     * Retrieves the receipt for a user by email.
+     *
+     * @param email the email of the user
+     * @return a ResponseEntity containing the receipt or an error message
+     */
     @GetMapping("/receipt/{email}")
     public ResponseEntity getReceipt(@PathVariable String email) {
         ReceiptDTO receipt = trainService.getTicket(email);
@@ -45,6 +65,12 @@ public class TrainController {
         }
     }
 
+    /**
+     * Retrieves users and their allocated seats by section.
+     *
+     * @param section the section to filter by
+     * @return a ResponseEntity containing the users and seats or an error message
+     */
     @GetMapping("/users-by-section")
     public ResponseEntity getUsersBySection(@RequestParam String section) {
         Map<String, String> usersBySection = trainService.getUsersBySection(section);
@@ -55,12 +81,24 @@ public class TrainController {
         }
     }
 
+    /**
+     * Removes a user and their ticket by email.
+     *
+     * @param email the email of the user
+     * @return a ResponseEntity containing a success or error message
+     */
     @DeleteMapping("/remove/{email}")
     public ResponseEntity removeUser(@PathVariable String email) {
         return trainService.removeUser(email) ? ResponseEntity.status(HttpStatus.OK).body("User removed successfully.") :
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
 
+    /**
+     * Modifies the seat for a user's ticket.
+     *
+     * @param purchaseTicketDTO the purchase ticket data transfer object
+     * @return a ResponseEntity containing the updated receipt or an error message
+     */
     @PutMapping("/modify")
     public ResponseEntity modifySeat(@RequestBody PurchaseTicketDTO purchaseTicketDTO) {
         try {

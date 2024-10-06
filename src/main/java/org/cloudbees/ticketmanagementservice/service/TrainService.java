@@ -19,6 +19,7 @@ public class TrainService {
 
     /**
      * Initializes the TrainService with seats for sections A and B.
+     * Seats are numbered from A1 to A50 and B1 to B50.
      */
     public TrainService() {
         for (int i = 1; i <= 50; i++) {
